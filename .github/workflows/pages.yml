@@ -1,0 +1,63 @@
+name: Publish directory
+on:
+  push:
+    branches: [main]
+    paths: ["directory/**", "site/**", "scripts/publish-directory.py", "thd_sources/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: Public domain to check and add to the recheck list
+        required: false
+        type: string
+  schedule:
+    - cron: "23 8 * * 1"
+permissions:
+  contents: read
+concurrency:
+  group: public-directory
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install directory dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Check requested domains and build
+        env:
+          CHECK_DOMAIN: ${{ inputs.domain }}
+          RECHECK_DIRECTORY: ${{ github.event_name == 'schedule' }}
+          PAGES_DOMAIN: ${{ vars.PAGES_DOMAIN }}
+        run: python scripts/publish-directory.py
+      - name: Commit public observations
+        if: github.event_name != 'push'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add directory site
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: update public sitemap observations'
+            git push
+          fi
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

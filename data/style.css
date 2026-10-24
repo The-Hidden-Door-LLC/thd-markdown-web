@@ -1,0 +1,26 @@
+@define-color void #06070e;
+@define-color surface #0a0d1a;
+@define-color starlight #dfe6ff;
+@define-color muted #8d9abb;
+@define-color gold #e7c66a;
+window { background: @void; color: @starlight; font-family: 'Atkinson Hyperlegible'; font-size: 15px; }
+headerbar { background: @void; border-bottom: 1px solid #20283d; padding: 6px; box-shadow:none; }
+.header { background: @void; border-bottom: 1px solid #20283d; padding: 8px; }
+button { border-radius: 8px; padding: 7px 11px; box-shadow:none; }
+button.suggested-action { background:@gold; color:@void; font-weight:bold; }
+.brand { font-family:Sora; font-size:16px; font-weight:600; }
+.muted { color:@muted; }
+.eyebrow { color:@gold; font-size:11px; font-weight:bold; letter-spacing:2px; }
+.sidebar { background:@surface; border-right:1px solid #20283d; padding:20px 16px; }
+.source-card { background:#11172a; border:1px solid #232d47; border-radius:10px; padding:12px; }
+.source-name { font-weight:bold; }
+.source-hint { font-size:12px; color:@muted; }
+.pane-header { background:@surface; padding:10px 16px; border-bottom:1px solid #20283d; }
+.status { border-top:1px solid #20283d; padding:8px 16px; font-size:12px; color:@muted; }
+.notice { background:#252136; padding:10px 16px; color:@gold; }
+entry { background:#11172a; border:1px solid #29334e; border-radius:8px; padding:8px; color:@starlight; }
+textview { font-family:monospace; font-size:14px; }
+paned > separator { background:#20283d; min-width:1px; min-height:1px; }
+.browser-navigation { background:@surface; padding:8px; border-bottom:1px solid #20283d; }
+.site-pages { background:transparent; }
+.site-page { padding:10px 8px; border-bottom:1px solid #20283d; }
