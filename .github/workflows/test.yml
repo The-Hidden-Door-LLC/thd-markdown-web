@@ -12,6 +12,17 @@ jobs:
           persist-credentials: false
       - name: Install desktop test dependencies
         run: sudo apt-get update && sudo apt-get install -y python3-venv python3-gi python3-markdown-it python3-pil gir1.2-gtk-4.0 gir1.2-gtksource-5 gir1.2-webkit-6.0 xvfb xdotool dbus-x11 openssl desktop-file-utils
+      - name: Permit WebKit sandbox namespaces on the disposable runner
+        run: |
+          cat <<'PROFILE' | sudo tee /etc/apparmor.d/thd-ci-bwrap >/dev/null
+          abi <abi/4.0>,
+          include <tunables/global>
+          profile thd-ci-bwrap /usr/bin/bwrap flags=(unconfined) {
+            userns,
+          }
+          PROFILE
+          sudo apparmor_parser -r /etc/apparmor.d/thd-ci-bwrap
+          bwrap --unshare-user --ro-bind / / /usr/bin/true
       - name: Install Python dependencies
         run: |
           python3 -m venv --system-site-packages .venv
